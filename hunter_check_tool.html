@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hunter Check - Ví Dev</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f4f8; }
+    input, button { padding: 10px; margin: 5px 0; width: 100%; }
+    .result { margin-top: 20px; padding: 10px; background: #fff; border: 1px solid #ccc; }
+    .history { margin-top: 20px; font-size: 0.9em; color: #555; }
+  </style>
+</head>
+<body>
+  <h2>Hunter Tool – Check Ví Dev</h2>
+  <input type="text" id="walletInput" placeholder="Dán địa chỉ ví dev Solana..." />
+  <button onclick="checkWallet()">Check</button>
+  <div class="result" id="resultBox">Kết quả sẽ hiển thị ở đây...</div>
+  <div class="history">
+    <strong>Lịch sử ví đã check:</strong>
+    <ul id="historyList"></ul>
+  </div>
+
+  <script>
+    function checkWallet() {
+      const wallet = document.getElementById("walletInput").value.trim();
+      if (!wallet) return alert("Nhập địa chỉ ví trước đã!");
+      
+      // Lưu lịch sử ví
+      let history = JSON.parse(localStorage.getItem("walletHistory") || "[]");
+      if (!history.includes(wallet)) {
+        history.unshift(wallet);
+        if (history.length > 10) history.pop();
+        localStorage.setItem("walletHistory", JSON.stringify(history));
+        updateHistory();
+      }
+
+      // Giả lập kết quả check
+      const score = Math.floor(Math.random() * 21); // Điểm ngẫu nhiên từ 0-20
+      const trust = score > 15 ? "CAO" : score > 10 ? "TRUNG BÌNH" : "THẤP";
+      const result = `
+        <strong>Địa chỉ ví:</strong> ${wallet}<br/>
+        <strong>Điểm uy tín:</strong> ${score}/20 (${trust})<br/>
+        <strong>Token đã tạo:</strong> ${Math.floor(Math.random() * 8 + 1)} token<br/>
+        <strong>Cảnh báo:</strong> ${trust === "THẤP" ? "Rủi ro rug cao!" : "Có thể cân nhắc vào lệnh."}
+      `;
+      document.getElementById("resultBox").innerHTML = result;
+    }
+
+    function updateHistory() {
+      const list = document.getElementById("historyList");
+      list.innerHTML = "";
+      let history = JSON.parse(localStorage.getItem("walletHistory") || "[]");
+      history.forEach(addr => {
+        let li = document.createElement("li");
+        li.textContent = addr;
+        list.appendChild(li);
+      });
+    }
+
+    updateHistory();
+  </script>
+</body>
+</html>
